@@ -78,6 +78,7 @@ The audio effects/tools included in this release are as follows:
 ** compand: Signal level compression/expansion/limiting
 ** contrast: Phase contrast volume enhancement
 ** dcshift: Apply or remove DC offset
+** deess: Dynamic de-esser with a band-pass side-chain
 ** fade: Apply a fade-in and/or fade-out to the audio
 ** gain: Apply gain or attenuation; normalise/equalise/balance/headroom
 ** loudness: Gain control with ISO 226 loudness compensation

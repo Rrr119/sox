@@ -28,6 +28,7 @@
   EFFECT(contrast)
   EFFECT(dcshift)
   EFFECT(deemph)
+  EFFECT(deess)
   EFFECT(delay)
   EFFECT(dft_filter) /* abstract */
   EFFECT(dither)

@@ -13,7 +13,7 @@ dist_man_MANS = sox.1 soxi.1 soxformat.7 libsox.3
 EXTRA_DIST = sox.txt soxi.txt soxformat.txt libsox.txt \
 	     sox.pc.in LICENSE.GPL LICENSE.LGPL \
 	     cygbuild README.win32 README.osx scripts/batch-example.bat \
-	     README.sh FEATURES.in
+	     README.sh FEATURES.in test/test-deess.sh
 
 pkgconfig_DATA = sox.pc
 

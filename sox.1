@@ -1932,6 +1932,45 @@ This effect supports the \fB\-\-plot\fR global option.
 .SP
 See also the \fBbass\fR and \fBtreble\fR shelving equalisation effects.
 .TP
+\fBdeess\fR [\fIthreshold-dB\fR [\fIcenter-freq\fR [\fIbandwidth\fR
+[\fIattack\fR [\fIrelease\fR [\fImax-atten-dB\fR]]]]]]
+.SP
+Dynamic de-esser: attenuates the sibilance (the harsh `ess' sounds) of a
+narration or vocal recording without affecting the rest of the audio.
+.SP
+A side-chain built from a biquad band-pass filter measures the level of
+the signal around the sibilance band.  When that level rises above
+\fIthreshold-dB\fR (a level in dB relative to full-scale, default \-40),
+a downward gain is applied to the full-band signal; below the threshold
+the gain is unity (0\*d0\ dB) and the audio passes unchanged.  The
+side-chain centre frequency defaults to 6500\ Hz and its bandwidth to
+5000\ Hz, so by default the side-chain spans the 4\ kHz to 9\ kHz
+sibilance range.  Frequencies may be given using a suffix, e.g.
+\fB6.5k\fR.
+.SP
+\fIattack\fR and \fIrelease\fR (in seconds, defaults 0\*d005 and
+0\*d05) set, respectively, how quickly the attenuation engages and how
+slowly it recovers.  Both the side-chain envelope and the applied gain
+are smoothed with these times, so the gain changes are continuous and
+free of pumping and zipper noise.  \fImax-atten-dB\fR (a positive number
+in dB, default 20) limits the amount of gain reduction, preventing the
+effect from over-reacting to a single burst of sibilance.
+.SP
+Each channel is processed with an independent side-chain and gain, so
+mono and multi-channel audio behave identically.  The band-pass
+coefficients are calculated from the input sample rate and are
+recalculated automatically if the sample rate changes within the
+effects chain.  For example, to de-ess a vocal track with the default
+settings:
+.EX
+   sox vocal.wav vocal-deessed.wav deess
+.EE
+or with a slightly higher threshold and at most 12\ dB of reduction:
+.EX
+   sox vocal.wav vocal-deessed.wav deess \-35 6500 5000 0.005 0.05 12
+.EE
+See also the \fBcompand\fR and \fBmcompand\fR dynamic-range effects.
+.TP
 \fBdelay\fR {\fIposition(=)\fR}
 Delay one or more audio channels such that they start at the given
 \fIposition\fR.

@@ -56,7 +56,7 @@ libsox_la_SOURCES = adpcms.c adpcms.h aiff.c aiff.h cvsd.c cvsd.h cvsdfilt.h \
 # Effects source
 libsox_la_SOURCES += \
 	band.h bend.c biquad.c biquad.h biquads.c chorus.c compand.c \
-	compandt.c compandt.h contrast.c dcshift.c delay.c dft_filter.c \
+	compandt.c compandt.h contrast.c dcshift.c deess.c delay.c dft_filter.c \
 	dft_filter.h dither.c dither.h divide.c downsample.c earwax.c \
 	echo.c echos.c effects.c effects.h effects_i.c effects_i_dsp.c \
 	fade.c fft4g.c fft4g.h fifo.h fir.c firfit.c flanger.c gain.c \
@@ -133,7 +133,7 @@ example4_LDADD = ${sox_LDADD}
 example5_LDADD = ${sox_LDADD}
 example6_LDADD = ${sox_LDADD}
 
-EXTRA_DIST = monkey.wav optional-fmts.am \
+EXTRA_DIST = monkey.wav optional-fmts.am libsox.sym \
 	     tests.sh testall.sh tests.bat testall.bat test-comments
 
 all: sox$(EXEEXT)
