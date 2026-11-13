@@ -9,7 +9,7 @@ RM = rm -f
 
 # man pages are not considered to be sources, so need to add "dist_"
 # prefix to ensure they are added to the distribution.
-dist_man_MANS = sox.1 soxi.1 soxformat.7 libsox.3
+dist_man_MANS = sox.1 soxi.1 soxformat.7 libsox.3 sox-quality.1
 EXTRA_DIST = sox.txt soxi.txt soxformat.txt libsox.txt \
 	     sox.pc.in LICENSE.GPL LICENSE.LGPL \
 	     cygbuild README.win32 README.osx scripts/batch-example.bat \

@@ -1,0 +1,203 @@
+.TH SOX-QUALITY 1 "November 13, 2026" "SoX" "Sound eXchange"
+.SH NAME
+sox-quality \- produce a JSON audio quality report
+.SH SYNOPSIS
+.B sox-quality
+[\fIoptions\fR] \fIfile\fR|\fIdirectory\fR ...
+.SH DESCRIPTION
+.B sox-quality
+opens one or more audio files with libSoX and writes a machine-readable
+JSON report.  Metrics include integrated loudness, maximum short-term
+loudness, true peak, clipped samples, DC offset and an estimated noise floor.
+.PP
+When a directory is given, it is scanned recursively by default.  Files are
+analyzed independently and a batch summary is generated.  The summary's
+integrated loudness is calculated over the union of all 400 ms gating blocks
+from successfully analyzed files; it is not an average of the per-file LUFS
+values.  Other summary metrics are maxima or sums as indicated by their names.
+.SH OPTIONS
+.TP
+.BI \-o " file"
+.TQ
+.BI \-\-output= file
+Write JSON to
+.I file
+instead of standard output.  A
+.I file
+of
+.B -
+means standard output.
+.TP
+.B \-r
+.TQ
+.B \-\-recursive
+Recurse into directories.  This is the default.
+.TP
+.B \-\-no\-recursive
+Analyze only files directly contained in directories.
+.TP
+.BI \-\-absolute\-gate= lufs
+Set the EBU R128 absolute gate.  The default is
+.B \-70 LUFS
+and accepted values are in
+[\-120, 0).
+.TP
+.BI \-\-relative\-gate= lu
+Set the EBU R128 relative gate below the absolute-gated mean.  The default is
+.B 10 LU
+and accepted values are in
+(0, 40].
+.TP
+.B \-q
+.TQ
+.B \-\-quiet
+Suppress libSoX warning and error messages.  The JSON still contains an
+.B error
+entry for files that could not be analyzed.
+.TP
+.B \-h
+.TQ
+.B \-\-help
+Display command usage.
+.TP
+.B \-V
+.TQ
+.B \-\-version
+Display the libSoX version.
+.SH ANALYSIS
+The default calculations implement ITU-R BS.1770-4 and EBU R128 as follows.
+.SS Loudness
+K-weighting is derived for the actual sample rate using the BS.1770 pre-filter
+(high shelf) and RLB high-pass filter.  Input is grouped into 100 ms bins
+rounded to the nearest sample.  Integrated loudness uses 400 ms blocks, i.e.
+four bins, advanced by one bin, for 75% overlap.
+.PP
+The absolute gate accepts blocks at or above
+.B \-70 LUFS.
+The relative gate is
+.B 10 LU
+below the mean energy of the absolute-gated blocks.  Integrated loudness is
+computed from the gated blocks at or above both thresholds.  Short-term
+loudness uses a sliding 3000 ms window advanced every 100 ms, and the report
+contains its maximum.  Complete windows only are used; a file shorter than
+400 ms has no integrated loudness, and one shorter than 3 seconds has no
+short-term maximum.
+.PP
+Channel weights follow BS.1770: 1.0 for the first three channels, 1.41 for
+surround channels, and zero for the LFE channel in layouts of six or more
+channels.  For four channels the weights are 1.0, 1.0, 1.41, 1.41; for five
+channels they are 1.0, 1.0, 1.0, 1.41, 1.41.  All weights are 1.0 for mono and
+stereo.  Channels beyond six are excluded because SoX does not expose channel
+layout metadata to this command.
+.SS True peak
+True peak is measured on the unweighted signal using 4-times oversampling with
+a 49-tap Hanning-windowed sinc polyphase interpolator and is reported in dBTP.
+.SS Clipping
+A clipped sample is a decoded sample equal to the positive or negative
+full-scale code of the source precision.  Decoder-reported out-of-range
+conversions are included as well.  The value is a sample count, not a count of
+runs.
+.SS DC offset
+.B dc_offset
+is the arithmetic mean of all decoded samples across all channels, normalized
+to the internal
+[\-1, 1)
+range.
+.B dc_offset_dbfs
+is
+20 log10(|dc_offset|).
+.SS Noise floor
+.B noise_floor_dbfs
+is a non-normative estimate: the 10th percentile (nearest rank) of complete
+400 ms unweighted RMS blocks, expressed in dBFS.  It is useful as a batch
+outlier check, but it is not an EBU R128 defined metric.
+.SH OUTPUT
+The output is one JSON object.  Its top-level fields are:
+.TP
+.B schema_version
+Integer schema version, currently 1.
+.TP
+.B report
+Always
+.BR sox-quality .
+.TP
+.B tool
+Object containing the tool name and libSoX version.
+.TP
+.B generated_at
+UTC timestamp in ISO 8601 form.
+.TP
+.B mode
+.B single
+or
+.BR batch .
+.TP
+.B method
+The active windows, thresholds and algorithm descriptions.
+.TP
+.B summary
+Aggregate metrics, file counts and total duration.  Unavailable numeric
+metrics are represented as JSON
+.BR null .
+.TP
+.B files
+Array of per-file objects.  Successful entries contain
+.B format
+and
+.B metrics
+objects; failed entries contain
+.B status: "error"
+and an
+.B error
+message.
+.PP
+The per-file
+.B metrics
+object has the following numeric fields:
+.B integrated_loudness_lufs
+(LUFS),
+.B short_term_loudness_max_lufs
+(LUFS),
+.B true_peak_dbtp
+(dBTP),
+.B clipped_samples
+(integer count),
+.B dc_offset
+(normalized linear mean),
+.B dc_offset_dbfs
+(dBFS), and
+.B noise_floor_dbfs
+(dBFS).
+.PP
+The batch
+.B summary
+also contains
+.B files_total,
+.B files_analyzed,
+.B files_failed,
+.B files_with_clipping,
+.B duration_seconds
+and
+.BR scalar_samples .
+.SH EXIT STATUS
+Zero if all attempted files were analyzed successfully.  Non-zero if any file
+could not be opened or analyzed, or if the JSON output could not be written.
+.SH EXAMPLES
+Generate a report for one file:
+.EX
+  sox-quality master.wav > master-quality.json
+.EE
+Generate a report and summary for a delivery directory:
+.EX
+  sox-quality -o delivery-quality.json delivery/
+.EE
+Use the same integrated-loudness measurement as FFmpeg's loudnorm filter for
+cross-checking:
+.EX
+  ffmpeg -i master.wav -af loudnorm=I=-23:print_format=json -f null -
+.EE
+.SH SEE ALSO
+.B sox(1),
+.B soxi(1),
+.B soxformat(7),
+.B libsox(3)

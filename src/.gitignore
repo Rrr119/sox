@@ -14,9 +14,12 @@ stamp-h1
 *.la
 sox
 sox.exe
+sox-quality
+sox-quality.exe
 play
 play.exe
 rec
 rec.exe
 soxi
 soxi.exe
+__pycache__

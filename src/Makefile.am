@@ -21,11 +21,13 @@ endif
 # SoX - the application #
 #########################
 
-bin_PROGRAMS = sox
+bin_PROGRAMS = sox sox-quality
 EXTRA_PROGRAMS = example0 example1 example2 example3 example4 example5 example6 sox_sample_test
 lib_LTLIBRARIES = libsox.la
 include_HEADERS = sox.h
 sox_SOURCES = sox.c
+sox_quality_SOURCES = quality-report.c
+sox_quality_LDADD = ${sox_LDADD}
 if HAVE_WIN32_GLOB
 sox_SOURCES += win32/glob.c win32/glob.h
 AM_CPPFLAGS += -I$(srcdir)/win32
@@ -134,9 +136,10 @@ example5_LDADD = ${sox_LDADD}
 example6_LDADD = ${sox_LDADD}
 
 EXTRA_DIST = monkey.wav optional-fmts.am \
-	     tests.sh testall.sh tests.bat testall.bat test-comments
+	     tests.sh testall.sh tests.bat testall.bat test-comments \
+	     quality-report-test.py
 
-all: sox$(EXEEXT)
+all: sox$(EXEEXT) sox-quality$(EXEEXT)
 
 examples: example0$(EXEEXT) example1$(EXEEXT) example2$(EXEEXT) example3$(EXEEXT) example4$(EXEEXT) example5$(EXEEXT) example6$(EXEEXT)
 
@@ -155,6 +158,7 @@ uninstall-hook:
 
 clean-local:
 	$(RM) play$(EXEEXT) rec$(EXEEXT) soxi$(EXEEXT)
+	$(RM) sox-quality$(EXEEXT)
 	$(RM) sox_sample_test$(EXEEXT)
 	$(RM) example0$(EXEEXT) example1$(EXEEXT) example2$(EXEEXT) example3$(EXEEXT) example4$(EXEEXT) example5$(EXEEXT) example6$(EXEEXT)
 
@@ -181,4 +185,7 @@ loc:
 installcheck:
 	$(srcdir)/tests.sh --bindir=$(DESTDIR)${bindir} --builddir=${builddir} --srcdir=${srcdir}
 	$(srcdir)/testall.sh --bindir=$(DESTDIR)${bindir} --srcdir=${srcdir}
+
+check-local: sox-quality$(EXEEXT)
+	python3 $(srcdir)/quality-report-test.py --bindir=$(builddir) --srcdir=$(srcdir)
 
