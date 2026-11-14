@@ -2599,6 +2599,45 @@ and
 .B tempo
 effects.
 .TP
+\fBpvstretch \fIfactor\fR [\fIwindow-ms\fR [\fIoverlap-percent\fR [\fItransient-sensitivity\fR]]]
+Change the audio playback speed but not its pitch using a phase vocoder.
+The short-time Fourier transform is advanced frame by frame while the
+phase of each frequency bin is propagated at its estimated instantaneous
+frequency; the output duration is therefore changed without shifting the
+frequency content.
+.SP
+Detected transient attacks reset the phase accumulators, which keeps
+percussive sounds such as drums from being smeared by the overlapping
+windows.
+.SP
+.I factor
+is the speed multiplier and must be in the range 0\*d5 to 2\*d0.
+Values greater than 1 speed the audio up and values less than 1 slow it
+down.
+.I window-ms
+selects the analysis window length in milliseconds; the default is 46.
+The nearest power-of-two FFT size is used and the actual length is
+reported at the selected sampling rate.  The accepted range is 10 to
+200\ ms.
+.I overlap-percent
+selects the analysis-window overlap as a percentage; the default is 75.
+The accepted range is 50 to 90.  When slowing down, the analysis hop is
+automatically reduced if necessary to retain at least 50% synthesis
+overlap.
+.I transient-sensitivity
+is in the range 0 to 1 (default 0\*d5).  Higher values make the transient
+detector respond to smaller energy rises.
+.SP
+The effect works on multiple channels together and supports any sampling
+rate supported by SoX; the window size is selected from the sampling rate
+and the requested duration.
+.SP
+See also
+.B tempo
+for a WSOLA implementation, and
+.B stretch
+for another time-stretching algorithm.
+.TP
 \fBrate\fR [\fB\-q\fR\^|\^\fB\-l\fR\^|\^\fB\-m\fR\^|\^\fB\-h\fR\^|\^\fB\-v\fR] [override-options] \fIRATE\fR[\fBk\fR]
 Change the audio sampling rate (i.e. resample the audio) to any given
 .I RATE
@@ -3970,7 +4009,9 @@ for an effect that changes tempo and pitch together,
 .B pitch
 and \fBbend\fR for effects that change pitch only, and
 .B stretch
-for an effect that changes tempo using a different algorithm.
+and
+.B pvstretch
+for effects that change tempo using different algorithms.
 .TP
 \fBtreble \fIgain\fR [\fIfrequency\fR[\fBk\fR]\fR [\fIwidth\fR[\fBs\fR\^|\^\fBh\fR\^|\^\fBk\fR\^|\^\fBo\fR\^|\^\fBq\fR]]]
 Apply a treble tone-control effect.

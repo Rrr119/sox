@@ -101,6 +101,7 @@ The audio effects/tools included in this release are as follows:
 * Pitch/tempo effects
 ** bend: Bend pitch at given times without changing tempo
 ** pitch: Adjust pitch (= key) without changing tempo
+** pvstretch: Adjust tempo without changing pitch (phase vocoder alg.)
 ** speed: Adjust pitch & tempo together
 ** stretch: Adjust tempo without changing pitch (simple alg.)
 ** tempo: Adjust tempo without changing pitch (WSOLA alg.)

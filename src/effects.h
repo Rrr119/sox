@@ -60,6 +60,7 @@
   EFFECT(pad)
   EFFECT(phaser)
   EFFECT(pitch)
+  EFFECT(pvstretch)
   EFFECT(rate)
   EFFECT(remix)
   EFFECT(repeat)

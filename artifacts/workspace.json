@@ -1,0 +1,17 @@
+{
+  "root": "/home/dev/feedback/uid8094",
+  "B": "/home/dev/feedback/uid8094",
+  "sha": "42b3557e13e0fe01a83465b672d89faddbe65f49",
+  "wslDistro": "Ubuntu-26.04",
+  "source": {
+    "owner": "chirlu",
+    "repo": "sox",
+    "sha": "42b3557e13e0fe01a83465b672d89faddbe65f49"
+  },
+  "fork": {
+    "owner": "Rrr119",
+    "repo": "sox",
+    "cloneUrl": "https://github.com/Rrr119/sox.git"
+  },
+  "at": "2026-11-14T08:22:24.856Z"
+}

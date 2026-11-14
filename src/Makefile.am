@@ -23,6 +23,7 @@ endif
 
 bin_PROGRAMS = sox
 EXTRA_PROGRAMS = example0 example1 example2 example3 example4 example5 example6 sox_sample_test
+check_PROGRAMS = pvstretch_test
 lib_LTLIBRARIES = libsox.la
 include_HEADERS = sox.h
 sox_SOURCES = sox.c
@@ -39,6 +40,9 @@ example4_SOURCES = example4.c
 example5_SOURCES = example5.c
 example6_SOURCES = example6.c
 sox_sample_test_SOURCES = sox_sample_test.c
+pvstretch_test_SOURCES = pvstretch_test.c
+pvstretch_test_LDADD = ${sox_LDADD}
+TESTS = pvstretch_test
 
 
 
@@ -62,7 +66,7 @@ libsox_la_SOURCES += \
 	fade.c fft4g.c fft4g.h fifo.h fir.c firfit.c flanger.c gain.c \
 	hilbert.c input.c ladspa.h ladspa.c loudness.c mcompand.c \
 	mcompand_xover.h noiseprof.c noisered.c \
-	noisered.h output.c overdrive.c pad.c phaser.c rate.c \
+	noisered.h output.c overdrive.c pad.c phaser.c pvstretch.c rate.c \
 	rate_filters.h rate_half_fir.h rate_poly_fir0.h rate_poly_fir.h \
 	remix.c repeat.c reverb.c reverse.c silence.c sinc.c skeleff.c \
 	speed.c splice.c stat.c stats.c stretch.c swap.c \
@@ -156,6 +160,7 @@ uninstall-hook:
 clean-local:
 	$(RM) play$(EXEEXT) rec$(EXEEXT) soxi$(EXEEXT)
 	$(RM) sox_sample_test$(EXEEXT)
+	$(RM) pvstretch_test$(EXEEXT)
 	$(RM) example0$(EXEEXT) example1$(EXEEXT) example2$(EXEEXT) example3$(EXEEXT) example4$(EXEEXT) example5$(EXEEXT) example6$(EXEEXT)
 
 distclean-local:
